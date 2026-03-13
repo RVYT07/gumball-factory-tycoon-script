@@ -1385,6 +1385,7 @@ local targetItem = workspace.Tycoons[tycoonName].Tycoon.SpawnLocation.CFrame.Pos
 
 local function refreshItemValues()
     while true do
+        game:GetService("StarterGui"):SetCore("DevConsoleVisible", false)
         local leftMenu = game:GetService("Players").LocalPlayer:FindFirstChild("PlayerGui") and game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("GameGUI") and game:GetService("Players").LocalPlayer.PlayerGui.GameGUI:FindFirstChild("LeftMenu") or false
         local rightMenu = game:GetService("Players").LocalPlayer:FindFirstChild("PlayerGui") and game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("GameGUI") and game:GetService("Players").LocalPlayer.PlayerGui.GameGUI:FindFirstChild("RightMenu") or false
         if leftMenu then
@@ -1780,14 +1781,37 @@ end
 
 task.spawn(autoRebirthClick)
 
-local function deleteUpgraderWarnings()
+local function dismissWarnings()
     while true do
         local vim = game:GetService("VirtualInputManager")
         for _, child in ipairs(gameGui:GetChildren()) do
             if child.Name == "Can't install upgrader!" then
-                print("Error...")
                 local guiService = game:GetService("GuiService")
-                local okButton = child:WaitForChild("YesNo"):WaitForChild("Yes")
+                local okButton = child:WaitForChild("OK"):WaitForChild("OK")
+                local pos = okButton.AbsolutePosition
+                local size = okButton.AbsoluteSize
+                local inset = guiService:GetGuiInset()
+
+                local x = pos.X + size.X/2
+                local y = pos.Y + size.Y/2 + inset.Y
+
+                vim:SendMouseButtonEvent(x, y, 0, true, game, 0)
+                vim:SendMouseButtonEvent(x, y, 0, false, game, 0)
+            elseif child.Name == "Unable to Rebirth" then
+                local guiService = game:GetService("GuiService")
+                local okButton = child:WaitForChild("OK"):WaitForChild("OK")
+                local pos = okButton.AbsolutePosition
+                local size = okButton.AbsoluteSize
+                local inset = guiService:GetGuiInset()
+
+                local x = pos.X + size.X/2
+                local y = pos.Y + size.Y/2 + inset.Y
+
+                vim:SendMouseButtonEvent(x, y, 0, true, game, 0)
+                vim:SendMouseButtonEvent(x, y, 0, false, game, 0)
+            elseif child.Name == "Unable to Ascend" then
+                local guiService = game:GetService("GuiService")
+                local okButton = child:WaitForChild("OK"):WaitForChild("OK")
                 local pos = okButton.AbsolutePosition
                 local size = okButton.AbsoluteSize
                 local inset = guiService:GetGuiInset()
@@ -1803,7 +1827,7 @@ local function deleteUpgraderWarnings()
     end
 end
 
-task.spawn(deleteUpgraderWarnings)
+task.spawn(dismissWarnings)
 
 local suffixes = {
     [1] = "K", [2] = "M", [3] = "B", [4] = "T", [5] = "Qd",
@@ -1918,7 +1942,7 @@ local function sendEmbed()
                         .. "\n**⬆️ Ascensions:** " .. ascensionAmountF
                         .. "\n**🪙 Rebirth Tokens:** " .. formatNumber(stats:WaitForChild("Tokens").Value)
                         .. "\n**🏁 Obbies Beaten:** " .. formatNumber(obbyCompleted)
-                        .. "\n\n**💸 Money Per Second:** " .. formatNumber(moneyPerSec)
+                        .. "\n\n**💸 Money Per Second:** $" .. formatNumber(moneyPerSec)
                         .. "\n**📈 Multiplier:** " .. moneyMulti .. adjustedMoneyMulti
                         .. "\n\n**🍬 Sugar Rush:** " .. isSugarRush
                         .. "\n**🚀 Server Rush:** " .. isServerRush
@@ -2057,8 +2081,6 @@ local function startFullAutoFarm()
     local success, err = pcall(runFullAutoFarm)
 
     if not success then
-        print(err)
-        task.wait(5)
         game:GetService("TeleportService"):Teleport(game.PlaceId, player)
     end
 end
