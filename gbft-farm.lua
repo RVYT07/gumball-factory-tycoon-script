@@ -1,9 +1,6 @@
 if game.PlaceId ~= 9976239895 then
-    print("Script stopped.")
     return
 end
-
-print("Running...")
 
 local upgradePrices = {
     ["Oven Evaluator"] = {
