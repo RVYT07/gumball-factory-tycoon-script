@@ -1426,7 +1426,11 @@ local function refreshItemValues()
         ascensionAmount = stats:WaitForChild("Ascensions").Value
         ascensionAmountF = (function(n)local s=tostring(n):reverse():gsub("(%d%d%d)","%1,"):reverse()if s:sub(1,1)==","then s=s:sub(2)end return s end)(stats:WaitForChild("Ascensions").Value)
         ascendPrice = ascensionPrices[ascensionAmount + 1] or 1e+12
-        ascensionPriceF = (function(n)local s=tostring(n):reverse():gsub("(%d%d%d)","%1,"):reverse()if s:sub(1,1)==","then s=s:sub(2)end return s end)(ascendPrice)
+        if ascendPrice ~= 1e+12 then
+            ascensionPriceF = (function(n)local s=tostring(n):reverse():gsub("(%d%d%d)","%1,"):reverse()if s:sub(1,1)==","then s=s:sub(2)end return s end)(ascendPrice)  .. " Rebirths"
+        else
+            ascensionPriceF = "MAX"
+        end
         humanoid.WalkSpeed = 0
         humanoid.JumpPower = 0
         uIS.MouseDeltaSensitivity = 0
@@ -1904,6 +1908,9 @@ end
 local requestFunc = http_request or request or syn and syn.request or fluxus and fluxus.request
 
 local function sendEmbed()
+    if webhook == "" or messageId == "" then
+        return
+    end
     while true do
         local playerGui = game:GetService("Players").LocalPlayer:FindFirstChild("PlayerGui")
         local moneyPerSec = math.ceil(game:GetService("ReplicatedStorage"):WaitForChild("PlayerData")[player.UserId]:WaitForChild("Storage"):WaitForChild("PerSecond").Value or 0)
@@ -1970,7 +1977,7 @@ local function sendEmbed()
                         .. "\n**🚀 Server Rush:** " .. isServerRush
                         .. "\n\n**🎯 Next Rebirth:** $" .. formatNumber(rebirthValue)
                         .. "\n**⚡ Next Rebirth Skip:** " .. nextRebirthSkip
-                        .. "\n**🌟 Next Ascension:** " .. ascensionPriceF .. " rebirths",
+                        .. "\n**🌟 Next Ascension:** " .. ascensionPriceF,
                     thumbnail = { url = embedImage },
                     color = 11272064,
                     timestamp = DateTime.now():ToIsoDate()
