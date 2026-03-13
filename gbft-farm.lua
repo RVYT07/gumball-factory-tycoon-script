@@ -1756,7 +1756,7 @@ local function autoRebirth()
         end
 
         if buttonPos then
-            while moneyAmount > 0 and canRebirth do
+            while moneyAmount > 0 and moneyAmount > rebirthValue and canRebirth do
                 hrp.CFrame = CFrame.new(buttonPos)
                 task.wait()
             end
