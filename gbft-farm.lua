@@ -2072,7 +2072,15 @@ local TeleportCheck = false
 player.OnTeleport:Connect(function()
 	if not TeleportCheck then
 		TeleportCheck = true
-		
+
+		local webhook = tostring(_G.webhook or ""):gsub('"','\\"')
+		local messageId = tostring(_G.messageId or ""):gsub('"','\\"')
+
+		local code =
+			'_G.webhook = "'..webhook..'"; ' ..
+			'_G.messageId = "'..messageId..'"; ' ..
+			'loadstring(game:HttpGet("https://raw.githubusercontent.com/RVYT07/gumball-factory-tycoon-script/main/gbft-farm.lua"))()'
+
 		if queue_on_teleport then
 			queue_on_teleport(code)
 		elseif queueteleport then
