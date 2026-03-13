@@ -1517,7 +1517,7 @@ local function buyTokenUpgraders()
         end
 
         buyUpgrader(cheapestName)
-        task.wait()
+        task.wait(0.2)
     end
 end
 
