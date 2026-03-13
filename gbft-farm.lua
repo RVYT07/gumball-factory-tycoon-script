@@ -1273,13 +1273,33 @@ local featureArgs = {
     "Faster Gumstick conveyor speed"
 }
 
-local function runFullAutoFarm()
-task.wait(10)
+ascensionPrices = {
+    1000,
+    2000,
+    3000,
+    4000,
+    5500,
+    7000,
+    9000,
+    12000,
+    15000,
+    20000,
+    25000,
+    30000,
+    40000,
+    50000,
+    65000,
+    80000,
+    100000
+}
 
+local function runFullAutoFarm()
 local player = game:GetService("Players").LocalPlayer
 local char
 local humanoid
 local hrp = false
+
+repeat task.wait() until game:GetService("ReplicatedStorage"):FindFirstChild("PlayerData") and game:GetService("ReplicatedStorage").PlayerData:FindFirstChild(tostring(player.UserId)) and game:GetService("ReplicatedStorage").PlayerData[tostring(player.UserId)]:FindFirstChild("Temporary") and game:GetService("ReplicatedStorage").PlayerData[tostring(player.UserId)].Temporary:FindFirstChild("DataLoaded") and game:GetService("ReplicatedStorage").PlayerData[tostring(player.UserId)].Temporary.DataLoaded.Value == true
 
 local function updateCharacter(newChar)
     char = newChar
@@ -1313,6 +1333,8 @@ local rebirthAmount = 0
 local rebirthAmountF = 0
 local ascensionAmount = 0
 local ascensionAmountF = 0
+local ascendPrice = 0
+local ascensionPriceF = 0
 local rebirthValue = 0
 local gumballsLeft = 1
 local canRebirth = false
@@ -1340,8 +1362,8 @@ if not ownsTycoon then
             local door = t:FindFirstChild("TycoonDoor", true)
             if door then
                 while owner.Value == nil do
-                    hrp.CFrame = door.CFrame + Vector3.new(0, 12.5, 0)
-                    task.wait(0.5)
+                    hrp.CFrame = door.CFrame + Vector3.new(0, 15, 0)
+                    task.wait(0.75)
                 end
             end
             break
@@ -1403,6 +1425,8 @@ local function refreshItemValues()
         rebirthAmountF = (function(n)local s=tostring(n):reverse():gsub("(%d%d%d)","%1,"):reverse()if s:sub(1,1)==","then s=s:sub(2)end return s end)(stats:WaitForChild("Rebirths").Value)
         ascensionAmount = stats:WaitForChild("Ascensions").Value
         ascensionAmountF = (function(n)local s=tostring(n):reverse():gsub("(%d%d%d)","%1,"):reverse()if s:sub(1,1)==","then s=s:sub(2)end return s end)(stats:WaitForChild("Ascensions").Value)
+        ascendPrice = ascensionPrices[ascensionAmount + 1] or 1e+12
+        ascensionPriceF = (function(n)local s=tostring(n):reverse():gsub("(%d%d%d)","%1,"):reverse()if s:sub(1,1)==","then s=s:sub(2)end return s end)(ascendPrice)
         humanoid.WalkSpeed = 0
         humanoid.JumpPower = 0
         uIS.MouseDeltaSensitivity = 0
@@ -1489,7 +1513,7 @@ local function buyTokenUpgraders()
         end
 
         buyUpgrader(cheapestName)
-        task.wait(0.2)
+        task.wait()
     end
 end
 
@@ -1591,7 +1615,6 @@ end
 task.spawn(autoEquipUpgraders)
 
 local function autoBuyGum()
-    task.wait(1)
     while true do
         local tycoon = workspace.Tycoons:FindFirstChild(tycoonName) or false
         repeat task.wait(1) until tycoon ~= false
@@ -1718,7 +1741,6 @@ local function autoRebirth()
             task.wait()
         end
 
-        local ascendPrice = (ascensionAmount + 1) * 1000
         local buttonPos
 
         if ascendPrice < rebirthAmount then
@@ -1885,7 +1907,7 @@ local function sendEmbed()
     while true do
         local playerGui = game:GetService("Players").LocalPlayer:FindFirstChild("PlayerGui")
         local moneyPerSec = math.ceil(game:GetService("ReplicatedStorage"):WaitForChild("PlayerData")[player.UserId]:WaitForChild("Storage"):WaitForChild("PerSecond").Value or 0)
-        local moneyMulti = (gameGui and gameGui:FindFirstChild("Multiplier") and gameGui.Multiplier.Text:gsub("Multiplier: ",""):lower()) or ""
+        local moneyMulti = (function(n)local n=tonumber(n)or 0;local i,d=math.floor(n),n-math.floor(n);local s=tostring(i):reverse():gsub("(%d%d%d)","%1,"):reverse();if s:sub(1,1)==","then s=s:sub(2)end;if d>0 then s=s..string.sub(tostring(d),2)end;return s end)((gameGui and gameGui:FindFirstChild("Multiplier") and gameGui.Multiplier.Text:gsub("Multiplier: ",""):gsub("x","")) or 0)
         local adjustedMoneyMulti = ""
         local sugarRush = (gameGui and gameGui:FindFirstChild("RushTime") and gameGui.RushTime.Text) or "0:00"
         local serverRush = (gameGui and gameGui:FindFirstChild("ServerRush") and gameGui.ServerRush:FindFirstChild("ServerRushTime") and gameGui.ServerRush.ServerRushTime.Text) or "0:00"
@@ -1932,7 +1954,7 @@ local function sendEmbed()
             content = "",
             embeds = {
                 {
-                    title = player.Name .. "'s Auto Farm Stats",
+                    title = player.DisplayName .. "'s Auto Farm Stats",
                     description =
                         "**🏭 MONEY FARM**"
                         .. "\n\n**🎮 FPS:** " .. getFPS()
@@ -1943,11 +1965,12 @@ local function sendEmbed()
                         .. "\n**🪙 Rebirth Tokens:** " .. formatNumber(stats:WaitForChild("Tokens").Value)
                         .. "\n**🏁 Obbies Beaten:** " .. formatNumber(obbyCompleted)
                         .. "\n\n**💸 Money Per Second:** $" .. formatNumber(moneyPerSec)
-                        .. "\n**📈 Multiplier:** " .. moneyMulti .. adjustedMoneyMulti
+                        .. "\n**📈 Multiplier:** " .. moneyMulti .. "x" .. adjustedMoneyMulti
                         .. "\n\n**🍬 Sugar Rush:** " .. isSugarRush
                         .. "\n**🚀 Server Rush:** " .. isServerRush
                         .. "\n\n**🎯 Next Rebirth:** $" .. formatNumber(rebirthValue)
-                        .. "\n**⚡ Next Rebirth Skip:** " .. nextRebirthSkip,
+                        .. "\n**⚡ Next Rebirth Skip:** " .. nextRebirthSkip
+                        .. "\n**🌟 Next Ascension:** " .. ascensionPriceF .. " rebirths",
                     thumbnail = { url = embedImage },
                     color = 11272064,
                     timestamp = DateTime.now():ToIsoDate()
@@ -1972,7 +1995,6 @@ task.spawn(sendEmbed)
 
 local function autoWinObbies()
     while true do
-        task.wait(0.5)
         local obbyPart1 = workspace.Obbies.EasyObby.Win
         local obbyPart2 = workspace.Obbies.HardObby.Win
         local obbyInfo = game:GetService("ReplicatedStorage").PlayerData[player.UserId].Storage.ObbyInfo
@@ -2099,8 +2121,8 @@ player.OnTeleport:Connect(function()
 		local messageId = tostring(_G.messageId or ""):gsub('"','\\"')
 
 		local code =
-			'_G.webhook = "'..webhook..'"; ' ..
-			'_G.messageId = "'..messageId..'"; ' ..
+			'_G.webhook = "'..webhook..'"\n' ..
+			'_G.messageId = "'..messageId..'"\n' ..
 			'loadstring(game:HttpGet("https://raw.githubusercontent.com/RVYT07/gumball-factory-tycoon-script/main/gbft-farm.lua"))()'
 
 		if queue_on_teleport then
