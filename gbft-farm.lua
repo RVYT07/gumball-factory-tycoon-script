@@ -1340,6 +1340,8 @@ local gumballsLeft = 1
 local canRebirth = false
 local initialUpgradeSpaces = 13
 local fractureSlot = nil
+local voidStarSlot = nil
+local fallenSakuraSlot = nil
 local buttonKey = "Rebirth now?"
 
 for _,t in pairs(tycoons:GetChildren()) do
@@ -1471,7 +1473,7 @@ end
 local function unloadUpgraders()
     repeat task.wait(1) until tycoonName ~= "None"
     for _, upgraderSlot in ipairs(upgraders:GetChildren()) do
-        if upgraderSlot ~= fractureSlot then
+        if upgraderSlot ~= fractureSlot and upgraderSlot ~= voidStarSlot and upgraderSlot ~= fallenSakuraSlot then
             request:InvokeServer("RemoveUpgrader", upgraderSlot)
         end
         task.wait()
@@ -1579,16 +1581,30 @@ local function autoEquipUpgraders()
         sortSlotsDescending(gumballSlots)
         sortSlotsDescending(gumstickSlots)
 
-        local fractureValue = game:GetService("ReplicatedStorage"):FindFirstChild("PlayerData") and game:GetService("ReplicatedStorage").PlayerData:FindFirstChild(tostring(player.UserId)) and game:GetService("ReplicatedStorage").PlayerData[tostring(player.UserId)]:FindFirstChild("RebirthOwned") and game:GetService("ReplicatedStorage").PlayerData[tostring(player.UserId)].RebirthOwned:FindFirstChild("Upgraders") and game:GetService("ReplicatedStorage").PlayerData[tostring(player.UserId)].RebirthOwned.Upgraders:FindFirstChild("The Fracture Upgrader")or false
-        if fractureValue and fractureValue.Value > 0 then
-            fractureSlot = gumballSlots[1]
+        local fractureValue = game:GetService("ReplicatedStorage"):FindFirstChild("PlayerData") and game:GetService("ReplicatedStorage").PlayerData:FindFirstChild(tostring(player.UserId)) and game:GetService("ReplicatedStorage").PlayerData[tostring(player.UserId)]:FindFirstChild("RebirthOwned") and game:GetService("ReplicatedStorage").PlayerData[tostring(player.UserId)].RebirthOwned:FindFirstChild("Upgraders") and game:GetService("ReplicatedStorage").PlayerData[tostring(player.UserId)].RebirthOwned.Upgraders:FindFirstChild("The Fracture Upgrader") or false
+        if fractureValue then
+            fractureSlot = gumballSlots[3]
             equipUpgrader("The Fracture Upgrader", fractureSlot)
             placedCounts["The Fracture Upgrader"] = 1
         end
 
+        local voidStarValue = game:GetService("ReplicatedStorage"):FindFirstChild("PlayerData") and game:GetService("ReplicatedStorage").PlayerData:FindFirstChild(tostring(player.UserId)) and game:GetService("ReplicatedStorage").PlayerData[tostring(player.UserId)]:FindFirstChild("RebirthOwned") and game:GetService("ReplicatedStorage").PlayerData[tostring(player.UserId)].RebirthOwned:FindFirstChild("Upgraders") and game:GetService("ReplicatedStorage").PlayerData[tostring(player.UserId)].RebirthOwned.Upgraders:FindFirstChild("The Void Star") or false
+        if voidStarValue then
+            voidStarSlot = gumballSlots[2]
+            equipUpgrader("The Void Star", voidStarSlot)
+            placedCounts["The Void Star"] = 1
+        end
+
+        local fallenSakuraValue = game:GetService("ReplicatedStorage"):FindFirstChild("PlayerData") and game:GetService("ReplicatedStorage").PlayerData:FindFirstChild(tostring(player.UserId)) and game:GetService("ReplicatedStorage").PlayerData[tostring(player.UserId)]:FindFirstChild("RebirthOwned") and game:GetService("ReplicatedStorage").PlayerData[tostring(player.UserId)].RebirthOwned:FindFirstChild("Upgraders") and game:GetService("ReplicatedStorage").PlayerData[tostring(player.UserId)].RebirthOwned.Upgraders:FindFirstChild("The Fallen Sakura") or false
+        if fallenSakuraValue then
+            fallenSakuraSlot = gumballSlots[2]
+            equipUpgrader("The Fallen Sakura", fallenSakuraSlot)
+            placedCounts["The Fallen Sakura"] = 1
+        end
+
         local function equipSlotsDescending(slots, upgradeType)
             for _, slot in ipairs(slots) do
-                if slot == fractureSlot then
+                if slot == fractureSlot or slot == voidStarSlot or slot == fallenSakuraSlot then
                     continue
                 end
 
