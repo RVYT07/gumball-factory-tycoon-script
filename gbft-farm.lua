@@ -1410,6 +1410,7 @@ local targetItem = workspace.Tycoons[tycoonName].Tycoon.SpawnLocation.CFrame.Pos
 local function refreshItemValues()
     while true do
         game:GetService("StarterGui"):SetCore("DevConsoleVisible", false)
+        game:GetService("StarterGui"):SetCoreGuiEnabled(Enum.CoreGuiType.Chat, false)
         local leftMenu = game:GetService("Players").LocalPlayer:FindFirstChild("PlayerGui") and game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("GameGUI") and game:GetService("Players").LocalPlayer.PlayerGui.GameGUI:FindFirstChild("LeftMenu") or false
         local rightMenu = game:GetService("Players").LocalPlayer:FindFirstChild("PlayerGui") and game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("GameGUI") and game:GetService("Players").LocalPlayer.PlayerGui.GameGUI:FindFirstChild("RightMenu") or false
         if leftMenu then
