@@ -1749,7 +1749,7 @@ local function autoRebirth()
 
         if ascendPrice < rebirthAmount then
             buttonPos = workspace:FindFirstChild("Tycoons") and workspace.Tycoons:FindFirstChild(tycoonName) and workspace.Tycoons[tycoonName]:FindFirstChild("Buttons") and workspace.Tycoons[tycoonName].Buttons:FindFirstChild("Ascend") and workspace.Tycoons[tycoonName].Buttons.Ascend:FindFirstChild("Button") and workspace.Tycoons[tycoonName].Buttons.Ascend.Button.CFrame.Position + Vector3.new(0, 3, 0)
-            buttonKey = "Ascend?"
+            buttonKey = "AscendPrompt"
         else
             buttonPos = workspace:FindFirstChild("Tycoons") and workspace.Tycoons:FindFirstChild(tycoonName) and workspace.Tycoons[tycoonName]:FindFirstChild("Buttons") and workspace.Tycoons[tycoonName].Buttons:FindFirstChild("Rebirth") and workspace.Tycoons[tycoonName].Buttons.Rebirth:FindFirstChild("Button") and workspace.Tycoons[tycoonName].Buttons.Rebirth.Button.CFrame.Position + Vector3.new(0, 3, 0)
             buttonKey = "Rebirth now?"
